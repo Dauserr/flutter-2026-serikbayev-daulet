@@ -1,31 +1,41 @@
+import 'catalogue.dart';
 import 'data.dart';
 import 'models.dart';
+import 'shelf_state.dart';
 
 void main() {
-  final books = rawBooks.map(Book.fromJson).toList();
+  final library = Library();
 
-  final items = <LibraryItem>[
-    ...books,
+  for (final data in rawBooks) {
+    library.add(Book.fromJson(data));
+  }
+
+  library.add(
     const Magazine(
       title: 'Dart Monthly',
       year: 2026,
       issue: 12,
     ),
-    const Ghost(
-      title: 'Lost Manuscript',
-      year: 1985,
-    ),
-  ];
+  );
 
-  for (final item in items) {
-    print(item.describe());
-    print('Old: ${item.isOld}');
+  library.open();
 
-    if (item is Book) {
-      print(item.borrowLabel());
-      print('Long: ${item.isLong}');
-    }
+  final books = library.items.whereType<Book>().toList();
+  final stats = statsOf(books);
 
-    print('---');
+  print(library.titles);
+  print(library.booksAfter2010);
+  print(library.averagePages);
+  print(library.booksPerAuthor);
+  print(library.authorNames);
+  print(library.genres);
+
+  for (final line in library.displayList) {
+    print(line);
   }
+
+  print(stats);
+  print(describe(const Empty()));
+  print(describe(Ready(books)));
+  print(describe(const Broken('Shelf needs repair')));
 }
