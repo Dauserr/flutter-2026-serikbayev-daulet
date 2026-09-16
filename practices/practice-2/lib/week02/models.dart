@@ -1,3 +1,23 @@
+abstract class LibraryItem {
+  final String title;
+  final int year;
+
+  const LibraryItem({
+    required this.title,
+    required this.year,
+  });
+
+  String describe();
+
+  bool get isOld => year < 2000;
+}
+
+mixin Borrowable on LibraryItem {
+  String borrowLabel() {
+    return 'Borrow: $title';
+  }
+}
+
 class Author {
   final String name;
   final String? country;
@@ -31,17 +51,15 @@ enum Genre {
   }
 }
 
-class Book {
-  final String title;
-  final int year;
+class Book extends LibraryItem with Borrowable {
   final int pages;
   final Author author;
   final Genre genre;
   final String? description;
 
   const Book({
-    required this.title,
-    required this.year,
+    required super.title,
+    required super.year,
     required this.pages,
     required this.author,
     required this.genre,
@@ -83,8 +101,49 @@ class Book {
   }
 
   @override
+  String describe() {
+    return '$title by ${author.name} ($year, $pages pages)';
+  }
+
+  @override
   String toString() {
     return 'Book(title: $title, year: $year, pages: $pages, '
         'author: $author, genre: ${genre.label})';
+  }
+}
+
+class Magazine extends LibraryItem {
+  final int issue;
+
+  const Magazine({
+    required super.title,
+    required super.year,
+    required this.issue,
+  });
+
+  @override
+  String describe() {
+    return '$title — issue $issue ($year)';
+  }
+}
+
+class Ghost implements LibraryItem {
+  @override
+  final String title;
+
+  @override
+  final int year;
+
+  const Ghost({
+    required this.title,
+    required this.year,
+  });
+
+  @override
+  bool get isOld => year < 2000;
+
+  @override
+  String describe() {
+    return 'Ghost item: $title ($year)';
   }
 }
