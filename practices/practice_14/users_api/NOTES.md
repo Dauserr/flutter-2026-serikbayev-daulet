@@ -90,4 +90,5 @@ flutter symbolize -i crash.txt -d releases/1.0.1+2/symbols/app.android-arm64.sym
 - App bundle: `build/app/outputs/bundle/release/app-release.aab`.
 - Release icon says `Users`; the launcher shows the custom U icon.
 - About screen: `1.0.1 (2)`, `release`, `prod`, `jsonplaceholder.typicode.com`.
-- `screenshot_about_release.png` captured from the installed release on the Android emulator; a physical phone and GitHub Release page are still pending because this environment has no GitHub credentials or physical device.
+- `screenshot_about_release.png` captured from the installed release on the physical Android phone (PLG110); `screenshot_release_page.png` shows the GitHub Release.
+- GitHub Release: https://github.com/Dauserr/flutter-2026-serikbayev-daulet/releases/tag/v1.0.1
