@@ -32,7 +32,7 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(create: (_) => AuthModel(store, token: token)),
         ChangeNotifierProvider(
-          create: (_) => UsersModel(UserRepository(api, cache))..load(),
+          create: (_) => UsersModel(HttpUserRepository(api, cache))..load(),
         ),
       ],
       child: const App(),

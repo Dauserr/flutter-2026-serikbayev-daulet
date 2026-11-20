@@ -5,13 +5,22 @@ import '../../core/api/api_exception.dart';
 import 'user.dart';
 import 'users_cache.dart';
 
-class UserRepository {
-  UserRepository(this._api, this._cache);
+typedef UsersResult = ({List<User> items, bool fromCache});
+
+abstract interface class UserRepository {
+  Future<UsersResult> getAll();
+  Future<User> getById(int id);
+  Future<User> create(User draft);
+}
+
+class HttpUserRepository implements UserRepository {
+  HttpUserRepository(this._api, this._cache);
 
   final ApiClient _api;
   final UsersCache _cache;
 
-  Future<({List<User> items, bool fromCache})> getAll() async {
+  @override
+  Future<UsersResult> getAll() async {
     try {
       final fresh = await _fetchUsers();
 
@@ -43,6 +52,7 @@ class UserRepository {
     }
   }
 
+  @override
   Future<User> getById(int id) async {
     final http.Response response = await _api.get('/users/$id');
 
@@ -55,6 +65,7 @@ class UserRepository {
     }
   }
 
+  @override
   Future<User> create(User draft) async {
     final http.Response response = await _api.post('/users', draft.toJson());
 
