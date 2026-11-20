@@ -13,15 +13,12 @@ class ApiClient {
   ApiClient({
     required this.store,
     http.Client? client,
-    this.host = const String.fromEnvironment(
-      'API_HOST',
-      defaultValue: 'jsonplaceholder.typicode.com',
-    ),
+    this.host = 'jsonplaceholder.typicode.com',
   }) : _client = client ?? http.Client();
 
   final SecureStore store;
   final http.Client _client;
-  final String host;
+  String host;
 
   Map<String, String> get headers => const {'Accept': 'application/json'};
 
