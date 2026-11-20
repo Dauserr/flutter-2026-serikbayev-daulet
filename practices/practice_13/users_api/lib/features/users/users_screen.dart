@@ -1,42 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/api/api_exception.dart';
 import '../settings/settings_model.dart';
 import '../settings/settings_screen.dart';
 import 'new_user_screen.dart';
 import 'user_detail_screen.dart';
 import 'users_model.dart';
-import 'widgets/generic_error_view.dart';
+import 'widgets/empty_users_view.dart';
 import 'widgets/loading_view.dart';
-import 'widgets/offline_view.dart';
-import 'widgets/server_error_view.dart';
+import 'widgets/offline_banner.dart';
 import 'widgets/user_list.dart';
+import 'widgets/users_error_view.dart';
+import 'widgets/users_filter_bar.dart';
+import 'widgets/users_header.dart';
 
 class UsersScreen extends StatelessWidget {
   const UsersScreen({super.key});
-
-  Widget _cacheBanner(BuildContext context, UsersModel model) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      color: colors.tertiaryContainer,
-      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-      child: Row(
-        children: [
-          Icon(Icons.cloud_off_outlined, color: colors.onTertiaryContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              'Saved data · no connection',
-              style: TextStyle(color: colors.onTertiaryContainer),
-            ),
-          ),
-          TextButton(onPressed: model.load, child: const Text('Retry')),
-        ],
-      ),
-    );
-  }
 
   Widget _list(BuildContext context, UsersModel model, String? city) {
     final items = city == null
@@ -44,7 +25,7 @@ class UsersScreen extends StatelessWidget {
         : model.items.where((user) => user.address.city == city).toList();
 
     if (items.isEmpty) {
-      return const Center(child: Text('No users'));
+      return EmptyUsersView(city: city);
     }
 
     return RefreshIndicator(
@@ -66,48 +47,49 @@ class UsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = context.watch<UsersModel>();
     final settings = context.watch<SettingsModel>();
-    final Widget body;
+    final error = model.error;
+    final city = settings.city;
+
+    Widget content;
 
     if (model.loading) {
-      body = const LoadingView();
+      content = const LoadingView();
+    } else if (error != null) {
+      content = UsersErrorView(error: error, onRetry: model.load);
     } else {
-      switch (model.error) {
-        case null:
-          final content = _list(context, model, settings.city);
+      content = _list(context, model, city);
 
-          body = model.fromCache
-              ? Column(
-                  children: [
-                    _cacheBanner(context, model),
-                    Expanded(child: content),
-                  ],
-                )
-              : content;
-        case NoConnectionException():
-          body = OfflineView(onRetry: model.load);
-        case NotFoundException() || UnauthorizedException():
-          body = const GenericErrorView();
-        case ServerException(:final status):
-          body = ServerErrorView(status: status, onRetry: model.load);
-        case BadResponseException():
-          body = const GenericErrorView();
+      if (model.fromCache) {
+        content = Column(
+          children: [
+            OfflineBanner(onRetry: model.load),
+            Expanded(child: content),
+          ],
+        );
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Users'),
-        actions: [
-          IconButton(
-            tooltip: 'Settings',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-              );
+    if (city != null && model.loading == false && error == null) {
+      content = Column(
+        children: [
+          UsersFilterBar(
+            city: city,
+            onClear: () {
+              unawaited(settings.setCity(null));
             },
-            icon: const Icon(Icons.settings_outlined),
           ),
+          Expanded(child: content),
         ],
+      );
+    }
+
+    return Scaffold(
+      appBar: UsersHeader(
+        onSettings: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'New user',
@@ -118,7 +100,7 @@ class UsersScreen extends StatelessWidget {
         },
         child: const Icon(Icons.person_add_alt_1),
       ),
-      body: body,
+      body: content,
     );
   }
 }
