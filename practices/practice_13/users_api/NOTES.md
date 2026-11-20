@@ -1,42 +1,42 @@
-# Practice 12 - Notes
+## Practice 13 - Where things go
 
-## Package verdicts
+### The seam that made the test possible
 
-1. **shared_preferences** - Verified publisher flutter.dev, released in October 2026, supports Android, iOS, Linux, macOS, web and Windows, 160 pub points, BSD-3-Clause, depends on the platform implementation packages; `flutter/packages` shows 299 open issues overall but was pushed on 18 November 2026.
-2. **flutter_secure_storage** - Third-party publisher steenbakker.dev, released in September 2026, supports Android, iOS, Linux, macOS, web and Windows, 160 pub points, BSD-3-Clause, depends on the platform implementation packages; its repository has 24 open issues and was pushed on 18 November 2026.
-3. **path_provider** - Verified publisher flutter.dev, released in June 2026, supports Android, iOS, Linux, macOS and Windows, 160 pub points, BSD-3-Clause, depends on the platform implementation packages; `flutter/packages` shows 299 open issues overall but was pushed on 18 November 2026.
-4. **image_picker** - Verified publisher flutter.dev, released in October 2026, supports Android, iOS, Linux, macOS, web and Windows, 160 pub points, Apache-2.0 / BSD-3-Clause, depends on the platform implementation packages; `flutter/packages` shows 299 open issues overall but was pushed on 18 November 2026.
-5. **permission_handler** - Third-party publisher baseflow.com, released in September 2026, supports Android, iOS, web and Windows, 160 pub points, MIT, depends on the platform implementation packages; its repository has 157 open issues but was pushed on 6 November 2026.
-6. **url_launcher** - Verified publisher flutter.dev, released in October 2026, supports Android, iOS, Linux, macOS, web and Windows, 160 pub points, BSD-3-Clause, depends on the platform implementation packages; `flutter/packages` shows 299 open issues overall but was pushed on 18 November 2026.
+The old `UsersModel` created its own repository, so the arrange step for "NoConnection sets error" could not be written: there was no constructor seam through which to hand the model a failing repository.
 
-## Caret and lock file
+### Why a widget, not a `_build...()` method
 
-`http` resolved to **1.6.0** in `pubspec.lock`.
+An extracted widget can be `const`, has its own rebuild scope, appears in DevTools, and can be pumped and tested in isolation. A private build method has none of those properties.
 
-`^1.2.0` accepts `>=1.2.0 <2.0.0`, so it accepts `1.2.0`, `1.6.0`, and `1.99.0`; it refuses `2.0.0` and anything above it.
+### The planted lat trace
 
-`pubspec.lock` is committed because this is an application, not a package: it pins exact direct and transitive versions so every machine and CI build gets the same dependency graph.
+`lat` was changed from `"-37.3159"` to `-37.3159` for user **Leanne Graham** (user id 1). `jsonplaceholder` sends `lat` as a string, so this violates the contract.
 
-`flutter pub outdated` showed `cupertino_icons` at `1.0.9` while `2.0.0` exists. It was not upgraded because the project still has `cupertino_icons: ^1.0.8`, which caps it below `2.0.0`.
+```text
+type 'double' is not a subtype of type 'String' in type cast
+#0      new Geo.fromJson (package:users_api/features/users/user.dart:9:37)
+#1      new Address.fromJson (package:users_api/features/users/user.dart:40:16)
+#2      new User.fromJson (package:users_api/features/users/user.dart:88:24)
+#3      BadRepository.getAll (file:///C:/Users/FoxOS_User/flutter-2026-serikbayev-daulet/practices/practice_13/users_api/test/tmp_trace_test.dart:40:26)
+#4      UsersModel.load (package:users_api/features/users/users_model.dart:23:34)
+#5      main.<anonymous closure> (.../test/tmp_trace_test.dart:55:19)
+<asynchronous suspension>
+```
 
-## Token storage
+`#0` is the right place to throw because `Geo.fromJson` is the first place that can see the broken `lat` claim, and it names the exact field. It is the wrong place to fix because `Geo` cannot decide whether bad JSON should become a cached result, a generic error, or a retry; that decision belongs to the repository and the model.
 
-`SharedPreferences.setString('token', ...)` would store the token in a plain preferences file: an XML file in the app's private data directory on Android, or a plist / NSUserDefaults file in the app container on iOS. It is readable through a device backup, by root or jailbreak access, or by anyone who can pull the app container over a cable. That is why the token goes to Keychain / Keystore through `flutter_secure_storage` instead.
+### Layer rule
 
-Two platform surprises from the lecture:
+`tool/check_layers.sh` checks both directions:
 
-- On iOS, Keychain items can survive an app uninstall; a reinstall can still see the old token.
-- On Android, removing the lock screen or changing device credentials can invalidate the Keystore key, making the stored token unreadable.
+- `package:http` appears only under `core/api` or in a `*_repository.dart`.
+- `package:flutter/material` never appears in a model, a repository or `core/api`.
 
-## Permissions
+### Tests
 
-Android: two "Don't allow" answers make the next `Permission.camera.request()` return `permanentlyDenied` without showing the system dialog. The app then shows its own dialog with **Open settings**, which calls `openAppSettings()`.
+- `user_test.dart`: real JSON parses; string `id` throws `TypeError`.
+- `users_model_test.dart`: loaded items; `NoConnectionException` sets `error`.
+- `user_repository_test.dart`: `404` → `NotFoundException`, `500` → `ServerException`, `SocketException` → `NoConnectionException`, broken `lat` → `BadResponseException`.
+- `users_screen_test.dart`: offline view and Retry.
 
-iOS: the system camera dialog is only shown once; after one **Don't Allow**, the status is permanently denied and only Settings can change it. In the Photos permission there is an extra fourth state, **limited**, for partial library access.
-
-## Storage locations
-
-- Settings: `SharedPreferencesAsync` (`darkMode`, `cityFilter`).
-- Token: `flutter_secure_storage` (`token`).
-- Offline users: `users.json` in `getApplicationDocumentsDirectory()`.
-- Avatar: `avatar.jpg` in `getApplicationDocumentsDirectory()`, path saved in preferences.
+The planted lat bug is reproduced in `user_test.dart` (`Geo rejects a numeric lat`) and mapped at the repository level in `user_repository_test.dart`.

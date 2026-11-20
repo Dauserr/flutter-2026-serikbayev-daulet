@@ -15,3 +15,20 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Quality checklist
+
+```text
+$ flutter analyze
+Analyzing users_api...
+No issues found! (ran in 1.1s)
+
+$ dart format .
+Formatted 32 files (0 changed) in 0.06 seconds.
+
+$ flutter test
+00:00 +10: All tests passed!
+
+$ bash tool/check_layers.sh
+(no output)
+```
