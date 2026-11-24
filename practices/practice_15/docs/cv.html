@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Daulet Serikbayev - CV</title>
+<style>
+  @page { size: A4; margin: 18mm 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: #172033; font: 11pt/1.42 "Segoe UI", Arial, sans-serif; }
+  h1 { margin: 0; font-size: 24pt; letter-spacing: -0.4px; }
+  h2 { margin: 18px 0 7px; font-size: 10pt; letter-spacing: 1.6px; text-transform: uppercase; color: #3f51b5; }
+  p { margin: 0 0 7px; }
+  .subtitle { margin-top: 4px; color: #3f51b5; font-weight: 600; }
+  .contact { margin-top: 7px; color: #475569; font-size: 10pt; }
+  .rule { height: 3px; background: #3f51b5; margin: 12px 0 2px; }
+  .row { display: flex; justify-content: space-between; gap: 20px; }
+  .muted { color: #64748b; }
+  ul { margin: 4px 0 0 18px; padding: 0; }
+  li { margin: 2px 0; }
+  .project strong { color: #172033; }
+  .project a, .contact a { color: #3f51b5; text-decoration: none; }
+  .skills { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .small { font-size: 10pt; }
+</style>
+</head>
+<body>
+  <h1>Daulet Serikbayev</h1>
+  <div class="subtitle">Flutter developer · KBTU · 2026</div>
+  <div class="contact">
+    Almaty, Kazakhstan · <a href="mailto:dauser200606@gmail.com">dauser200606@gmail.com</a> ·
+    <a href="https://github.com/Dauserr">github.com/Dauserr</a>
+  </div>
+  <div class="rule"></div>
+
+  <h2>Education</h2>
+  <div class="row">
+    <strong>Kazakh-British Technical University</strong>
+    <span class="muted">Almaty · 2026</span>
+  </div>
+  <p>Computer Science. Coursework in mobile development, Flutter, Android, data structures and software engineering.</p>
+
+  <h2>Projects</h2>
+  <p class="project">
+    <strong>Users app — Flutter.</strong>
+    Multi-screen client for the JSONPlaceholder REST API with provider state management, repository interfaces and fakes,
+    an offline cache in application Documents, secure token storage, camera/gallery profile photo, 10 unit/widget tests,
+    and a signed Android release APK, version 1.0.1 (2).
+    <a href="https://github.com/Dauserr/flutter-2026-serikbayev-daulet/releases/tag/v1.0.1">Release APK</a>
+    · <a href="https://github.com/Dauserr/flutter-2026-serikbayev-daulet/tree/main/practices/practice_14/users_api">Source</a>
+  </p>
+  <p class="project">
+    <strong>Reading Club — Flutter.</strong>
+    Multi-tab library app with forms, validation, routing, detail screens and responsive layouts.
+    <a href="https://github.com/Dauserr/flutter-2026-serikbayev-daulet/tree/main/practices/Lab1/reading_club">Source</a>
+  </p>
+
+  <h2>Skills</h2>
+  <div class="skills">
+    <div>
+      <strong>Keep</strong>
+      <ul>
+        <li>Flutter and Dart</li>
+        <li>provider / ChangeNotifier</li>
+        <li>REST, http and JSON models</li>
+        <li>Unit and widget tests</li>
+      </ul>
+    </div>
+    <div>
+      <strong>Also</strong>
+      <ul>
+        <li>shared_preferences, secure storage, file cache</li>
+        <li>Git and GitHub releases</li>
+        <li>Signed Android release builds</li>
+        <li>Learning: GraphQL, CI/CD, iOS release</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Selected practices</h2>
+  <p class="small">
+    Repository: <a href="https://github.com/Dauserr/flutter-2026-serikbayev-daulet">github.com/Dauserr/flutter-2026-serikbayev-daulet</a>.
+    The code is organized feature-first, with repositories behind interfaces, fakes for offline demos,
+    and a layer check that keeps HTTP and Flutter Material out of models and repositories.
+  </p>
+</body>
+</html>

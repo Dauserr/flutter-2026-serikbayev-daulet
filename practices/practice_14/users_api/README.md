@@ -1,17 +1,37 @@
-# Users
+# Users - a Flutter REST client
 
-A Flutter users directory app for the Mobile Development course. It reads users from JSONPlaceholder, keeps the last good list offline, stores a fake auth token securely, remembers settings, and ships with a signed release.
+A multi-screen users directory for Android: read a real REST API, survive a restart and an offline launch, and install a signed release.
 
-## Run
+| ![list](docs/list.png) | ![offline](docs/offline.png) |
+|---|---|
+| Users list over the network | Saved data when the API is unreachable |
+
+## Run it
 
 ```bash
-flutter run
-flutter run --dart-define=USE_FAKES=true
+flutter pub get
+flutter run                                      # defaults, no defines
+flutter run --dart-define=USE_FAKES=true         # no network needed
 flutter run --dart-define-from-file=env/local.json
 flutter build apk --release --dart-define-from-file=env/prod.json
 ```
 
-The demo build uses two local users and never touches the network.
+Release APK (arm64): [Releases](https://github.com/Dauserr/flutter-2026-serikbayev-daulet/releases/tag/v1.0.1) - v1.0.1, install on any Android phone.
+
+## Architecture (five lines)
+
+- `features/<name>/` - screen, ChangeNotifier, repository, per feature
+- `core/api/` - ApiClient: `Uri.https`, 10 s timeout, sealed `ApiException`
+- repositories behind interfaces; fakes for tests and `USE_FAKES`
+- storage: `shared_preferences` for settings, secure storage for a token, a file cache for users
+- `flutter test`: 10 tests - models, error mapping, one widget test
+
+## Team
+
+| Area | Owner | Reviewer |
+|---|---|---|
+| All features | Daulet Serikbayev | Course reviewer |
+
 
 ## Release
 

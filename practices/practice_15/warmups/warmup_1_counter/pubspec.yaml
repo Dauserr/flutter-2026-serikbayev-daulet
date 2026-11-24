@@ -1,0 +1,19 @@
+name: warmup_1_counter
+description: "Live-coding warm-up: shared counter with provider."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
