@@ -37,7 +37,7 @@ I read five answers aloud and listened once. Two things to change:
 ## Warm-up timings
 
 - Warm-up 1, counter with provider: finished inside the 20-minute slot; the first attempt showed the `Navigator` context mistake and the test caught it.
-- Warm-up 2, four-state list: first attempt finished at 20:00 with the error state still missing; the second attempt finished in 12:30. Difference: 7.5 minutes.
+- Warm-up 2, four-state list: first attempt finished at 20:00 with all four states; the second attempt finished in 12:30. Difference: 7.5 minutes.
 - Warm-up 3, form validators: finished in 17:00; the validators were extracted so the test does not need a widget.
 
 Warm-up folders are in `warmups/`; warm-up 2 has both attempts.
