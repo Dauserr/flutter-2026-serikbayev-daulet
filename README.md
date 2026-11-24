@@ -36,3 +36,7 @@ The app lives in [`practices/practice_14/users_api`](practices/practice_14/users
 | Area | Owner | Reviewer |
 |---|---|---|
 | All features | Daulet Serikbayev | Course reviewer |
+
+## Lab 2 - Shelf
+
+A second Flutter app in [`practices/Lab2/shelf`](practices/Lab2/shelf): Open Library catalogue search, a hosted CRUD reading shelf, offline cache, provider state, tests and a signed arm64 release. See its [README](practices/Lab2/shelf/README.md) and [team/ownership notes](practices/Lab2/shelf/TEAM.md).

@@ -1,0 +1,5 @@
+{
+  "CATALOGUE_HOST": "openlibrary.org",
+  "COLLECTION_HOST": "api.restful-api.dev",
+  "ENV": "local"
+}
