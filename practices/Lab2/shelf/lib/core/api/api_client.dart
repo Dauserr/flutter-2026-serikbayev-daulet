@@ -23,18 +23,20 @@ class ApiClient {
   Map<String, String> get headers => const {'Accept': 'application/json'};
 
   Future<http.Response> get(String path, {Map<String, String>? query}) async {
+    final started = DateTime.now();
     final requestHeaders = await _requestHeaders();
     final response = await _send(
       () => _client.get(_uri(path, query), headers: requestHeaders),
     );
 
     _check(response);
-    _log(response);
+    _log(response, DateTime.now().difference(started));
 
     return response;
   }
 
   Future<http.Response> put(String path, Object body) async {
+    final started = DateTime.now();
     final requestHeaders = await _requestHeaders();
     final response = await _send(
       () => _client.put(
@@ -45,24 +47,26 @@ class ApiClient {
     );
 
     _check(response);
-    _log(response);
+    _log(response, DateTime.now().difference(started));
 
     return response;
   }
 
   Future<http.Response> delete(String path) async {
+    final started = DateTime.now();
     final requestHeaders = await _requestHeaders();
     final response = await _send(
       () => _client.delete(_uri(path), headers: requestHeaders),
     );
 
     _check(response);
-    _log(response);
+    _log(response, DateTime.now().difference(started));
 
     return response;
   }
 
   Future<http.Response> post(String path, Object body) async {
+    final started = DateTime.now();
     final requestHeaders = await _requestHeaders();
     final response = await _send(
       () => _client.post(
@@ -73,7 +77,7 @@ class ApiClient {
     );
 
     _check(response);
-    _log(response);
+    _log(response, DateTime.now().difference(started));
 
     return response;
   }
@@ -111,6 +115,10 @@ class ApiClient {
       throw const NotFoundException();
     }
 
+    if (response.statusCode >= 400 && response.statusCode < 500) {
+      throw BadResponseException('HTTP ${response.statusCode}');
+    }
+
     if (response.statusCode >= 500) {
       throw ServerException(response.statusCode);
     }
@@ -124,12 +132,14 @@ class ApiClient {
     }
   }
 
-  void _log(http.Response response) {
+  void _log(http.Response response, [Duration? elapsed]) {
     if (!kDebugMode) return;
+
+    final took = elapsed == null ? '' : ' ${elapsed.inMilliseconds}ms';
 
     log(
       '${response.statusCode} ${response.request?.method} '
-      '${response.request?.url}',
+      '${response.request?.url}$took',
       name: 'api',
     );
   }
